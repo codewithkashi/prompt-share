@@ -1,28 +1,28 @@
 import { isAuth } from "@features/auth";
+import { connectDB } from "@databases/db";
 import Prompt from "@models/prompt";
 const handler = async (req, res) => {
   if (req.method !== "GET") {
-    return res.json({
+    return res.status(200).json({
       success: false,
       message: "Only GET is allowed",
     });
   }
-  const user = await isAuth(req, res);
-  if (user) {
-    try {
-      const allPosts = await Prompt.find({});
-      res
-        .json({
-          success: true,
-          allPosts,
-        })
-        .status(200);
-    } catch (error) {
-      res.json({
-        success: false,
-        message: "Internal Server Error",
-      });
-    }
+
+  try {
+    await connectDB();
+    const user = await isAuth(req, res);
+    const allPosts = await Prompt.find({});
+    return res.status(200).json({
+      success: true,
+      allPosts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
 

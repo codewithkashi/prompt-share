@@ -1,7 +1,6 @@
 import Prompt from "@models/prompt";
 import { connectDB } from "@databases/db";
 import { isAuth } from "@features/auth";
-connectDB();
 const handler = async (req, res) => {
   if (req.method !== "POST") {
     return res.json({
@@ -9,6 +8,7 @@ const handler = async (req, res) => {
       message: "Only POST is allowed",
     });
   }
+  await connectDB();
   const user = await isAuth(req, res);
   if (user) {
     const { prompt, tag } = req.body;
@@ -17,7 +17,7 @@ const handler = async (req, res) => {
       tag,
       creator: user.username,
     });
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Prompt Created",
     });

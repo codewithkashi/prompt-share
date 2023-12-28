@@ -1,7 +1,6 @@
 import User from "@models/user";
 import bcrypt from "bcrypt";
 import { connectDB } from "@databases/db";
-connectDB();
 const handler = async (req, res) => {
   if (req.method !== "POST") {
     return res.json({
@@ -11,6 +10,7 @@ const handler = async (req, res) => {
   }
 
   try {
+    await connectDB();
     const { username, email, password } = req.body;
     const user = await User.findOne({ $or: [{ email }, { username }] });
     if (user) {

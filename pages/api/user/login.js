@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@databases/db";
-connectDB();
+
 const handler = async (req, res, next) => {
   if (req.method !== "POST") {
     return res.json({
@@ -12,6 +12,7 @@ const handler = async (req, res, next) => {
     });
   }
   try {
+    await connectDB();
     const { email, password } = req.body;
     const userData = await User.findOne({ email }).select("+password");
 

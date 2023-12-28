@@ -1,9 +1,10 @@
 import { isAuth } from "@features/auth";
 import { connectDB } from "@databases/db";
 import Prompt from "@models/prompt";
-connectDB();
+
 const handler = async (req, res) => {
   try {
+    await connectDB();
     const user = await isAuth(req, res);
     const { id } = req.query;
     const { prompt, tag } = req.body;
@@ -13,12 +14,12 @@ const handler = async (req, res) => {
         creator: user.username,
       });
       if (userPrompt) {
-        return res.json({
+        return res.status(200).json({
           success: true,
           userPrompt,
         });
       }
-      return res.json({
+      return res.status(200).json({
         success: false,
         message: "Invalid Post ID",
       });
@@ -28,7 +29,7 @@ const handler = async (req, res) => {
         creator: user.username,
       });
       if (!updatePrompt) {
-        return res.json({
+        return res.status(200).json({
           success: false,
           message: "Invalid Post ID",
         });
@@ -36,7 +37,7 @@ const handler = async (req, res) => {
       updatePrompt.prompt = prompt;
       updatePrompt.tag = tag;
       updatePrompt.save();
-      res.json({
+      res.status(200).json({
         success: true,
         message: "Post Updated",
       });
@@ -46,24 +47,24 @@ const handler = async (req, res) => {
         creator: user.username,
       });
       if (!updatePrompt) {
-        return res.json({
+        return res.status(200).json({
           success: false,
           message: "Invalid Post ID",
         });
       }
       updatePrompt.deleteOne();
-      res.json({
+      res.status(200).json({
         success: true,
         message: "Post Deleted",
       });
     } else {
-      res.json({
+      res.status(200).json({
         success: false,
         message: "Only GET, PUT and DELETE are allowed",
       });
     }
   } catch (error) {
-    res.json({
+    res.status(200).json({
       success: false,
       message: "Internal Server Error",
     });

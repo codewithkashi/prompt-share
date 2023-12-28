@@ -1,7 +1,7 @@
 import User from "@models/user";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@databases/db";
-connectDB();
+
 const handler = async (req, res) => {
   if (req.method !== "GET") {
     return res.json({
@@ -10,6 +10,7 @@ const handler = async (req, res) => {
     });
   }
   try {
+    await connectDB();
     const { token } = req.cookies;
     if (!token) {
       res.json({
